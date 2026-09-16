@@ -33,9 +33,10 @@ class ToolsFragment : Fragment() {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = this@ToolsFragment.adapter
         }
-        view.findViewById<SwipeRefreshLayout>(R.id.tools_swipe).setOnRefreshListener {
+        val swipe = view.findViewById<SwipeRefreshLayout>(R.id.tools_swipe)
+        swipe.setOnRefreshListener {
             output.text = ""
-            it.isRefreshing = false
+            swipe.isRefreshing = false
         }
         return view
     }

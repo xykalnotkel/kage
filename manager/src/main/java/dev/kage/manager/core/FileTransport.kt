@@ -103,6 +103,7 @@ class FileTransport(
                 mode = json.optString("mode", "?"),
                 sdk = json.optInt("sdk"),
                 release = json.optString("release", "?"),
+                abi = json.optString("abi", "?"),
                 startedAt = json.optLong("startedAt"),
                 uptime = json.optLong("uptime"),
                 hasContext = json.optBoolean("hasContext"),

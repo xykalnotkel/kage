@@ -11,6 +11,7 @@ data class ServerStatus(
     val mode: String,
     val sdk: Int,
     val release: String,
+    val abi: String = "",
     val startedAt: Long,
     val uptime: Long,
     val hasContext: Boolean,

@@ -69,7 +69,7 @@ class KageDatabase(context: Context) : SQLiteOpenHelper(context, "kage.db", null
         val db = writableDatabase
         val updated = db.update("permissions", values, "package = ?", arrayOf(pkg))
         if (updated == 0) {
-            if (!granted) put("requestedAt", now)
+            if (!granted) values.put("requestedAt", now)
             db.insertWithOnConflict("permissions", null, values, SQLiteDatabase.CONFLICT_REPLACE)
         }
     }

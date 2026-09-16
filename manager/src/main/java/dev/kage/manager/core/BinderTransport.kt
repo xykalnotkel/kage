@@ -31,6 +31,7 @@ class BinderTransport(private val proxy: KageServiceProxy) : Transport {
                 mode = b.getString("mode") ?: "?",
                 sdk = b.getInt("sdk"),
                 release = b.getString("release") ?: "?",
+                abi = b.getString("abi") ?: "?",
                 startedAt = b.getLong("startedAt"),
                 uptime = b.getLong("uptime"),
                 hasContext = b.getBoolean("hasContext"),
