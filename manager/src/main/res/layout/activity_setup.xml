@@ -172,6 +172,30 @@
         </LinearLayout>
 
         <TextView
+            android:id="@+id/wireless_status"
+            style="@style/CardBody"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/wireless_section_hint" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_pair_notif"
+            style="@style/Widget.Material3.Button.TonalButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/wireless_pair_notif" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_start_termux"
+            style="@style/Widget.Material3.Button.TonalButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/wireless_start_termux" />
+
+        <TextView
             style="@style/CardTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

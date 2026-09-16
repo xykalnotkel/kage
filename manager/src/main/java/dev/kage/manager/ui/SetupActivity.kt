@@ -3,6 +3,8 @@ package dev.kage.manager.ui
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.widget.EditText
@@ -12,6 +14,7 @@ import com.google.android.material.button.MaterialButton
 import dev.kage.manager.R
 import dev.kage.manager.core.Singleton
 import dev.kage.manager.core.Starter
+import dev.kage.manager.wireless.WirelessPairing
 
 class SetupActivity : AppCompatActivity() {
 
@@ -76,6 +79,52 @@ class SetupActivity : AppCompatActivity() {
             runCatching { startActivity(Intent(Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS)) }
         }
 
+        // ---------- pairing lewat notifikasi (kode diketik di notif) ----------
+        val wirelessStatus = findViewById<TextView>(R.id.wireless_status)
+        findViewById<MaterialButton>(R.id.btn_pair_notif).setOnClickListener {
+            askForPairingPermissions()
+            WirelessPairing.postCodeNotification(
+                this,
+                WirelessPairing.Ports(
+                    WirelessPairing.cleanHostPort(pairInput.text.toString()),
+                    WirelessPairing.cleanHostPort(connectInput.text.toString())
+                )
+            )
+            openWirelessDebugging()
+            wirelessStatus.text = getString(R.string.wireless_discovering)
+            WirelessPairing.discover(this) { found ->
+                found.pair?.let { pairInput.setText(it) }
+                found.connect?.let { connectInput.setText(it) }
+                buildWireless()
+                WirelessPairing.postCodeNotification(this, found)
+                wirelessStatus.text = if (found.pair != null || found.connect != null) {
+                    getString(R.string.wireless_discovered, found.pair ?: "-", found.connect ?: "-")
+                } else {
+                    getString(R.string.wireless_not_found)
+                }
+            }
+        }
+        findViewById<MaterialButton>(R.id.btn_start_termux).setOnClickListener {
+            askForPairingPermissions()
+            val connect = WirelessPairing.cleanHostPort(connectInput.text.toString())
+            val scriptPath = paths?.script?.absolutePath
+            if (connect == null) {
+                wirelessStatus.text = getString(R.string.wireless_not_found)
+                toast(getString(R.string.wireless_not_found))
+                return@setOnClickListener
+            }
+            val sent = WirelessPairing.runInTermux(
+                this, WirelessPairing.termuxScript(null, connect, scriptPath, null)
+            )
+            val message = getString(if (sent) R.string.wireless_termux_sent else R.string.wireless_termux_blocked)
+            wirelessStatus.text = message
+            toast(message)
+        }
+
+        if (!WirelessPairing.isTermuxInstalled(this)) {
+            wirelessStatus.text = WirelessPairing.termuxHint(this)
+        }
+
         findViewById<MaterialButton>(R.id.btn_copy).setOnClickListener { copy(command) }
         findViewById<MaterialButton>(R.id.btn_copy_root).setOnClickListener { copy(rootCommand) }
         findViewById<MaterialButton>(R.id.btn_copy_manual).setOnClickListener { copy(manual) }
@@ -100,6 +149,32 @@ class SetupActivity : AppCompatActivity() {
         }
     }
 
+    private fun askForPairingPermissions() {
+        val wanted = mutableListOf<String>()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
+        ) {
+            wanted += android.Manifest.permission.POST_NOTIFICATIONS
+        }
+        if (WirelessPairing.isTermuxInstalled(this) &&
+            checkSelfPermission(TERMUX_RUN_COMMAND) != PackageManager.PERMISSION_GRANTED
+        ) {
+            wanted += TERMUX_RUN_COMMAND
+        }
+        if (wanted.isNotEmpty()) {
+            runCatching { requestPermissions(wanted.toTypedArray(), REQUEST_PAIRING) }
+        }
+    }
+
+    private fun toast(message: String) {
+        android.widget.Toast.makeText(this, message, android.widget.Toast.LENGTH_LONG).show()
+    }
+
+    override fun onDestroy() {
+        WirelessPairing.stop()
+        super.onDestroy()
+    }
+
     private fun openWirelessDebugging() {
         // halaman ini tidak punya konstanta publik, jadi dicoba beberapa aksi
         val candidates = listOf(
@@ -116,5 +191,10 @@ class SetupActivity : AppCompatActivity() {
         val clipboard = getSystemService(ClipboardManager::class.java)
         clipboard.setPrimaryClip(ClipData.newPlainText("kage", text))
         android.widget.Toast.makeText(this, R.string.copied, android.widget.Toast.LENGTH_SHORT).show()
+    }
+
+    private companion object {
+        const val REQUEST_PAIRING = 2101
+        const val TERMUX_RUN_COMMAND = "com.termux.permission.RUN_COMMAND"
     }
 }

@@ -25,4 +25,31 @@
     <string name="allow">Allow</string>
     <string name="deny">Deny</string>
     <string name="about_title">About</string>
+
+    <!-- wireless debugging pairing -->
+    <string name="wireless_channel_name">Pairing</string>
+    <string name="wireless_channel_desc">Wireless debugging pairing</string>
+    <string name="wireless_channel_result_name">Server status</string>
+    <string name="wireless_channel_result_desc">Result of starting the server wirelessly</string>
+    <string name="wireless_notif_title">Enter the pairing code</string>
+    <string name="wireless_notif_text">Expand this notification, type the 6-digit code, tap Send</string>
+    <string name="wireless_notif_body">Keep the code dialog open while you do this. Ports found automatically:</string>
+    <string name="wireless_send_code">Send</string>
+    <string name="wireless_code_hint">6-digit code</string>
+    <string name="wireless_code_invalid">That was not a 6 digit code. Pull the notification down again and retype it.</string>
+    <string name="wireless_no_ports">Pairing port unknown yet. Open Kage again and tap Pair once more, or fill the two fields by hand.</string>
+    <string name="wireless_no_termux">Termux is not installed. In this build adb runs inside Termux, see the setup text on the Setup screen.</string>
+    <string name="wireless_termux_blocked">Termux refused the command. Enable allow-external-apps in Termux and grant the RUN_COMMAND permission, then retry.</string>
+    <string name="wireless_termux_sent">Command sent to Termux, running in the background…</string>
+    <string name="wireless_result_ok">Server is running</string>
+    <string name="wireless_result_fail">Server is not running yet</string>
+    <string name="wireless_result_running">adb pair, adb connect and the start script all finished. Open Kage, every feature is ready.</string>
+    <string name="wireless_result_not_running">Still not running. Open Termux and read the output, or use the copy buttons on the Setup screen.</string>
+    <string name="wireless_pair_notif">Pair via notification (type the code in it)</string>
+    <string name="wireless_start_termux">Connect + start (Termux)</string>
+    <string name="wireless_discovering">Looking for the adb port over mDNS… (wireless debugging must be on)</string>
+    <string name="wireless_discovered">Found: pair %1$s · connect %2$s</string>
+    <string name="wireless_not_found">mDNS found nothing. Fill the two fields below by hand (the phone shows them).</string>
+    <string name="wireless_section_hint">Fastest way: tap Pair via notification → open Pair device with pairing code → pull the notification shade down (keep the dialog open), expand the Kage notification, type the code, Send. Termux then runs adb pair, adb connect and the start script by itself.</string>
+    <string name="wireless_termux_hint">Termux setup (once): install Termux, run pkg install android-tools, add allow-external-apps=true to ~/.termux/termux.properties, restart Termux. adb lives in %1$s.</string>
 </resources>

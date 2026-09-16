@@ -35,6 +35,33 @@ menampilkan **dua port berbeda**:
 Di app Kage buka **Beranda → Nyalakan server**. Di sana ada kolom untuk kedua port tersebut dan app
 akan membuatkan perintahnya otomatis (tinggal tekan Copy).
 
+**B0. Cara paling cepat: pairing lewat notifikasi (tanpa PC, tanpa split-screen)**
+
+Dialog "Pair device with pairing code" itu **hilang begitu kamu pindah app**, dan begitu dialognya
+hilang kode + port pairing-nya ikut hangus. Makanya Kage punya alur ala Shizuku: kodenya diketik di
+**notifikasi**, karena notification shade bisa ditarik turun sementara dialog tetap terbuka.
+
+1. Buka **Setelan → Nyalakan server → Pair lewat notifikasi**.
+2. Kage langsung: nyari port pairing & connect lewat **mDNS** (otomatis keisi di kolom), posting
+   notifikasi, dan membuka layar **Wireless debugging**.
+3. Tap **Pair device with pairing code** di layar HP — **jangan tutup dialognya**.
+4. Tarik notification shade → **expand** notifikasi Kage → ketik **kode 6 digit** → tap **Kirim**.
+5. Kage mengirim perintahnya ke **Termux** (jalan di background, jadi dialog nggak ketutup):
+   `adb pair` → `adb connect` → `adb shell sh .../start.sh`.
+6. Sekitar 15 detik kemudian Kage kasih notifikasi hasilnya: *Server jalan* atau *Server belum jalan*.
+
+Syarat sekali setup (kalau belum pernah):
+
+```sh
+# di Termux (install dari F-Droid, bukan Play Store)
+pkg install android-tools -y
+echo allow-external-apps=true >> ~/.termux/termux.properties   # wajib, sekali saja
+# lalu restart Termux, dan kasih izin "RUN_COMMAND" saat Kage memintanya
+```
+
+Kalau mDNS tidak menemukan port (beberapa ROM mematikan akses jaringan lokal untuk app background),
+isi dua kolom port manual seperti di B1/B2.
+
 **B1. Kalau ada PC:**
 
 ```sh
@@ -47,7 +74,7 @@ Pairing hanya perlu sekali per PC. Setelah itu cukup `adb connect` + perintah st
 
 **B2. Tanpa PC sama sekali (pakai HP ini sendiri lewat Termux):**
 
-1. Install **Termux** (dari F-Droid, bukan Play Store).
+1. Install **Termux** (dari F-Droid, bukan Play Store), `pkg install android-tools -y`, dan tambahin `allow-external-apps=true` di `~/.termux/termux.properties`. Setelah itu tombol **Connect + nyalakan (Termux)** di Kage bisa dipakai sekali tap. Panduan lain di B0 juga sama.
 2. Di Termux jalankan:
 
 ```sh

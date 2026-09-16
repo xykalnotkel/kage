@@ -25,4 +25,31 @@
     <string name="allow">Izinkan</string>
     <string name="deny">Tolak</string>
     <string name="about_title">Tentang</string>
+
+    <!-- pairing debug nirkabel -->
+    <string name="wireless_channel_name">Pairing</string>
+    <string name="wireless_channel_desc">Pairing debug nirkabel</string>
+    <string name="wireless_channel_result_name">Status server</string>
+    <string name="wireless_channel_result_desc">Hasil nyalain server lewat jalur nirkabel</string>
+    <string name="wireless_notif_title">Masukkan kode pairing</string>
+    <string name="wireless_notif_text">Expand notifikasi ini, ketik kode 6 digit, tap Kirim</string>
+    <string name="wireless_notif_body">Dialog kode harus tetap kebuka pas lo ngetik. Port yang ketemu otomatis:</string>
+    <string name="wireless_send_code">Kirim</string>
+    <string name="wireless_code_hint">Kode 6 digit</string>
+    <string name="wireless_code_invalid">Itu bukan kode 6 digit. Tarik notifikasinya lagi dan ketik ulang.</string>
+    <string name="wireless_no_ports">Port pairing belum ketemu. Buka Kage lagi dan tap Pair sekali lagi, atau isi dua kolomnya manual.</string>
+    <string name="wireless_no_termux">Termux belum keinstal. Di versi ini adb jalan di dalam Termux, lihat petunjuk di layar Setup.</string>
+    <string name="wireless_termux_blocked">Termux nolak perintahnya. Nyalain allow-external-apps di Termux dan kasih izin RUN_COMMAND, lalu coba lagi.</string>
+    <string name="wireless_termux_sent">Perintah dikirim ke Termux, jalan di background…</string>
+    <string name="wireless_result_ok">Server jalan</string>
+    <string name="wireless_result_fail">Server belum jalan</string>
+    <string name="wireless_result_running">adb pair, adb connect, dan script start-nya selesai semua. Buka Kage, semua fitur siap.</string>
+    <string name="wireless_result_not_running">Masih belum jalan. Buka Termux dan baca outputnya, atau pakai tombol salin di layar Setup.</string>
+    <string name="wireless_pair_notif">Pair lewat notifikasi (kode diketik di notif)</string>
+    <string name="wireless_start_termux">Connect + nyalakan (Termux)</string>
+    <string name="wireless_discovering">Nyari port adb lewat mDNS… (debug nirkabel harus nyala)</string>
+    <string name="wireless_discovered">Ketemu: pair %1$s · connect %2$s</string>
+    <string name="wireless_not_found">mDNS nggak nemu apa-apa. Isi dua kolom di bawah manual (portnya kelihatan di HP).</string>
+    <string name="wireless_section_hint">Cara paling cepet: tap Pair lewat notifikasi → buka "Pair device with pairing code" → tarik notif shade (dialog biarin kebuka), expand notifikasi Kage, ketik kodenya, Kirim. Termux langsung ngejalanin adb pair, adb connect, dan script start-nya.</string>
+    <string name="wireless_termux_hint">Setup Termux (sekali aja): instal Termux, jalanin pkg install android-tools, tambahin allow-external-apps=true ke ~/.termux/termux.properties, restart Termux. adb ada di %1$s.</string>
 </resources>

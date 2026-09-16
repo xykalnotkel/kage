@@ -8,6 +8,14 @@
     <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"
         tools:ignore="QueryAllPackagesPermission" />
 
+    <!-- Termux runs adb on the device for the pairing step -->
+    <uses-permission android:name="com.termux.permission.RUN_COMMAND" />
+
+    <!-- Android 11+ package visibility: we have to see Termux to talk to it -->
+    <queries>
+        <package android:name="com.termux" />
+    </queries>
+
     <!-- Kage's own API permission: client apps request this, the server grants it through the shell -->
     <permission
         android:name="dev.kage.permission.API"
@@ -69,5 +77,10 @@
             android:name="dev.kage.provider.KageProvider"
             android:authorities="dev.kage.manager.kage"
             android:exported="true" />
+
+        <!-- receives the 6 digit code typed into the pairing notification -->
+        <receiver
+            android:name=".wireless.PairingCodeReceiver"
+            android:exported="false" />
     </application>
 </manifest>
