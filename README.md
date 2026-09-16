@@ -7,9 +7,14 @@ Clone Shizuku dari nol: **server privileged yang jalan sebagai shell/root** + **
 server/   dex yang dijalankan lewat app_process (uid 2000 kalau dari adb, 0 kalau dari su)
 common/   protokol, JSON, kripto, BinderContainer - dipakai server & client
 provider/ client library (Kage, KageProvider, KageServiceProxy) untuk app pihak ketiga
-manager/  app Android: dashboard, manajemen izin, shell, toolbox, log
+manager/  app Android: dashboard, manajemen izin, shell, toolbox, log, About
+sample/   APK contoh yang memakai library Kage - bukti "dipakai app lain" + referensi integrasi
 scripts/  build-server-dex.sh (javac + d8)
+docs/     PANDUAN.md, DIPAKAI-APP-LAIN.md, ARSITEKTUR.md
 ```
+
+Setiap rilis menyertakan tiga berkas: **manager-release.apk** (app utama),
+**sample-release.apk** (app klien contoh), dan **kage-provider-<versi>.aar** (library siap pakai).
 
 ## Cara kerja singkat
 
@@ -64,6 +69,10 @@ CI: `.github/workflows/android.yml` membangun debug + release dan mengunggah APK
 
 ## Pakai library-nya di app lain
 
+Panduan lengkap: [docs/DIPAKAI-APP-LAIN.md](docs/DIPAKAI-APP-LAIN.md) - termasuk penjelasan nama
+mekanismenya (Binder, binder proxy, binder push lewat ContentProvider, kenapa bukan AIDL),
+referensi API, dan daftar penyebab gagal yang paling sering.
+
 ```xml
 <uses-permission android:name="dev.kage.permission.API" />
 <provider
@@ -73,16 +82,24 @@ CI: `.github/workflows/android.yml` membangun debug + release dan mengunggah APK
 ```
 
 ```java
-if (!Kage.checkSelfPermission(this)) Kage.requestPermission(this);   // minta izin ke manager
+if (!Kage.checkSelfPermission(this)) Kage.requestPermission(this, 1001);  // dialog di manager
 Kage.addBinderReceivedListener(() -> {
     try {
         KageRemoteProcess p = Kage.newProcess(new String[]{"id"});
-        // baca stdout lewat p.getInputStream()
+        // baca stdout lewat p.getInputStream(), tunggu lewat p.waitFor()
     } catch (RemoteException e) { }
 });
+Kage.requestBinder(this);   // opsional: minta push lebih cepat
 ```
 
-## Lisensi
+Contoh app klien yang jalan: modul [`sample/`](sample) (APK `dev.kage.sample`).
 
-Kode di repo ini ditulis dari nol dengan referensi perilaku (bukan kode) dari proyek Shizuku
-(Apache-2.0). Kalau kamu memakai / memodifikasi proyek Shizuku, ikuti lisensinya.
+## Lisensi dan atribusi
+
+- Kode Kage: **Apache License 2.0** - lihat [LICENSE](LICENSE).
+- Atribusi & komponen pihak ketiga: [NOTICE](NOTICE) (AndroidX, Material Components, Kotlin,
+  kotlinx-coroutines - semuanya Apache 2.0).
+- Terima kasih untuk **Shizuku** (RikkaApps, Apache 2.0) yang mempopulerkan pola *binder lewat
+  ContentProvider* dan *dex lewat app_process*. Kage ditulis dari nol dan tidak memakai kode
+  Shizuku; kalau kamu memakai Shizuku, ikuti lisensi proyek itu.
+- Di dalam app: **Setelan → Tentang Kage** berisi versi, lisensi, atribusi, dan tautan dokumentasi.

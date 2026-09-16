@@ -5,6 +5,7 @@ import android.content.ClipboardManager
 import android.content.Intent
 import android.os.Bundle
 import android.provider.Settings
+import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.button.MaterialButton
@@ -35,6 +36,46 @@ class SetupActivity : AppCompatActivity() {
             append("Token tersimpan di app (8 karakter awal): ").append(token.take(8)).append('…')
         }
 
+        // ---------- wizard wireless debugging ----------
+        val pairInput = findViewById<EditText>(R.id.input_pair_port)
+        val connectInput = findViewById<EditText>(R.id.input_connect_port)
+        val wirelessPc = findViewById<TextView>(R.id.wireless_pc)
+        val wirelessTermux = findViewById<TextView>(R.id.wireless_termux)
+
+        val buildWireless: () -> Unit = {
+            val pair = pairInput.text.toString().trim().ifBlank { "IP:PORT_PAIRING" }
+            val connect = connectInput.text.toString().trim().ifBlank { "IP:PORT_CONNECT" }
+            val start = paths?.script?.absolutePath ?: "-"
+            wirelessPc.text = buildString {
+                append("adb pair ").append(pair).append("      # masukkan kode 6 digit dari HP\n")
+                append("adb connect ").append(connect).append("\n")
+                append("adb shell sh ").append(start)
+            }
+            wirelessTermux.text = buildString {
+                append("pkg install android-tools -y\n")
+                append("adb pair ").append(pair.replace(Regex("^[0-9.]+(?=:)"), "localhost")).append("\n")
+                append("adb connect ").append(connect.replace(Regex("^[0-9.]+(?=:)"), "localhost")).append("\n")
+                append("adb shell sh ").append(start)
+            }
+        }
+        buildWireless()
+        val watcher = object : android.text.TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                buildWireless()
+            }
+            override fun afterTextChanged(s: android.text.Editable?) = Unit
+        }
+        pairInput.addTextChangedListener(watcher)
+        connectInput.addTextChangedListener(watcher)
+        findViewById<MaterialButton>(R.id.btn_make_wireless).setOnClickListener { buildWireless() }
+        findViewById<MaterialButton>(R.id.btn_copy_wireless_pc).setOnClickListener { copy(wirelessPc.text.toString()) }
+        findViewById<MaterialButton>(R.id.btn_copy_wireless_termux).setOnClickListener { copy(wirelessTermux.text.toString()) }
+        findViewById<MaterialButton>(R.id.btn_open_wireless_settings).setOnClickListener { openWirelessDebugging() }
+        findViewById<MaterialButton>(R.id.btn_open_dev_settings).setOnClickListener {
+            runCatching { startActivity(Intent(Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS)) }
+        }
+
         findViewById<MaterialButton>(R.id.btn_copy).setOnClickListener { copy(command) }
         findViewById<MaterialButton>(R.id.btn_copy_root).setOnClickListener { copy(rootCommand) }
         findViewById<MaterialButton>(R.id.btn_copy_manual).setOnClickListener { copy(manual) }
@@ -57,6 +98,18 @@ class SetupActivity : AppCompatActivity() {
                 }
             }.start()
         }
+    }
+
+    private fun openWirelessDebugging() {
+        // halaman ini tidak punya konstanta publik, jadi dicoba beberapa aksi
+        val candidates = listOf(
+            "android.settings.WIRELESS_DEBUGGING_SETTINGS",
+            "android.settings.APPLICATION_DEVELOPMENT_SETTINGS",
+        )
+        for (action in candidates) {
+            if (runCatching { startActivity(Intent(action)) }.isSuccess) return
+        }
+        runCatching { startActivity(Intent(Settings.ACTION_WIRELESS_SETTINGS)) }
     }
 
     private fun copy(text: String) {

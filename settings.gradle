@@ -16,3 +16,4 @@ rootProject.name = "Kage"
 include ':common'
 include ':provider'
 include ':manager'
+include ':sample'

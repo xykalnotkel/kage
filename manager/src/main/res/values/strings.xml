@@ -24,4 +24,5 @@
     <string name="copied">Copied to clipboard</string>
     <string name="allow">Allow</string>
     <string name="deny">Deny</string>
+    <string name="about_title">About</string>
 </resources>

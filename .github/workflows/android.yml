@@ -66,8 +66,15 @@ jobs:
       - name: Build the privileged server dex
         run: bash scripts/build-server-dex.sh
 
-      - name: Assemble debug + release
+      - name: Assemble manager (app utama)
         run: ./gradlew :manager:assembleDebug :manager:assembleRelease --no-daemon --stacktrace
+
+      - name: Assemble sample (app klien contoh) + AAR library
+        run: |
+          ./gradlew :sample:assembleDebug :sample:assembleRelease :provider:assembleRelease --no-daemon --stacktrace
+          VERSION=$(grep -oP 'kageVersion=\K.*' gradle.properties || echo 1.0.0)
+          cp provider/build/outputs/aar/provider-release.aar "kage-provider-${VERSION}.aar"
+          ls -la "kage-provider-${VERSION}.aar"
 
       - name: Verify signing
         run: |
@@ -75,13 +82,16 @@ jobs:
           echo "APK: $APK"
           "$ANDROID_HOME"/build-tools/34.0.0/apksigner verify --print-certs "$APK" || true
 
-      - name: Upload APKs
+      - name: Upload APKs + AAR
         uses: actions/upload-artifact@v4
         with:
           name: kage-apks
           path: |
             manager/build/outputs/apk/debug/*.apk
             manager/build/outputs/apk/release/*.apk
+            sample/build/outputs/apk/debug/*.apk
+            sample/build/outputs/apk/release/*.apk
+            kage-provider-*.aar
           if-no-files-found: error
 
       - name: Attach APKs to a tagged release
@@ -105,4 +115,6 @@ jobs:
           files: |
             manager/build/outputs/apk/release/*.apk
             manager/build/outputs/apk/debug/*.apk
+            sample/build/outputs/apk/release/*.apk
+            kage-provider-*.aar
           fail_on_unmatched_files: true

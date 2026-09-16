@@ -56,6 +56,11 @@
             android:label="@string/setup_title" />
 
         <activity
+            android:name=".ui.AboutActivity"
+            android:exported="false"
+            android:label="@string/about_title" />
+
+        <activity
             android:name=".ui.LogsActivity"
             android:exported="false"
             android:label="@string/logs_title" />

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/detail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textSize="13sp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_permission"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="1. Minta izin ke manager Kage" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_binder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="2. Minta Binder ke server" />
+
+        <EditText
+            android:id="@+id/command"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:fontFamily="monospace"
+            android:hint="id"
+            android:inputType="textNoSuggestions"
+            android:text="id; getprop ro.product.model" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_run"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="3. Jalankan perintah dengan akses server" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_status"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="Lihat status server" />
+
+        <TextView
+            android:id="@+id/output"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="#101014"
+            android:fontFamily="monospace"
+            android:minHeight="140dp"
+            android:padding="10dp"
+            android:textColor="#D7D7DB"
+            android:textIsSelectable="true"
+            android:textSize="12sp" />
+    </LinearLayout>
+</ScrollView>

@@ -1,0 +1,70 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+}
+
+/**
+ * Contoh app klien: bukti bahwa library Kage bisa dipakai APK lain persis seperti Shizuku.
+ * App ini tidak punya akses istimewa apa pun - semua keistimewaan dipinjam dari server Kage.
+ */
+def keystorePropertiesFile = rootProject.file('keystore/keystore.properties')
+def keystoreProperties = new Properties()
+if (keystorePropertiesFile.exists()) {
+    keystorePropertiesFile.withInputStream { keystoreProperties.load(it) }
+}
+def signingStorePath = System.getenv('KAGE_KEYSTORE_PATH') ?: keystoreProperties.getProperty('storeFile')
+def signingStorePassword = System.getenv('KAGE_KEYSTORE_PASSWORD') ?: keystoreProperties.getProperty('storePassword')
+def signingKeyAlias = System.getenv('KAGE_KEY_ALIAS') ?: keystoreProperties.getProperty('keyAlias')
+def signingKeyPassword = System.getenv('KAGE_KEY_PASSWORD') ?: keystoreProperties.getProperty('keyPassword')
+
+android {
+    namespace 'dev.kage.sample'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "dev.kage.sample"
+        minSdk 26
+        targetSdk 34
+        versionCode 3
+        versionName "1.1.0"
+    }
+
+    if (signingStorePath != null && signingStorePassword != null) {
+        signingConfigs {
+            release {
+                storeFile rootProject.file(signingStorePath)
+                storePassword signingStorePassword
+                keyAlias signingKeyAlias
+                keyPassword signingKeyPassword
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            if (signingStorePath != null && signingStorePassword != null) {
+                signingConfig signingConfigs.release
+            }
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    kotlinOptions { jvmTarget = '17' }
+    buildFeatures { buildConfig true }
+    lint { abortOnError false }
+}
+
+dependencies {
+    // satu-satunya dependency yang dibutuhkan app klien: library Kage
+    implementation project(':provider')
+    implementation project(':common')
+    implementation 'androidx.core:core-ktx:1.13.1'
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'com.google.android.material:material:1.12.0'
+}

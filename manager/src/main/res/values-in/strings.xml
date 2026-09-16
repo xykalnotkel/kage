@@ -24,4 +24,5 @@
     <string name="copied">Tersalin ke clipboard</string>
     <string name="allow">Izinkan</string>
     <string name="deny">Tolak</string>
+    <string name="about_title">Tentang</string>
 </resources>

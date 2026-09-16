@@ -33,7 +33,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="Settings → About phone → tap Build number 7x → Developer options → USB debugging." />
+            android:text="Settings → About phone → tap Build number 7x → Developer options → nyalakan USB debugging (dan Wireless debugging kalau mau tanpa kabel)." />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_open_dev_settings"
+            style="@style/Widget.Material3.Button.TonalButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Buka Developer options" />
 
         <TextView style="@style/CardTitle" android:layout_width="wrap_content"
             android:layout_height="wrap_content" android:layout_marginTop="16dp"
@@ -77,8 +85,127 @@
         </LinearLayout>
 
         <TextView style="@style/CardTitle" android:layout_width="wrap_content"
-            android:layout_height="wrap_content" android:layout_marginTop="16dp"
-            android:text="3. Alternatif: ADB wireless / terminal di HP" />
+            android:layout_height="wrap_content" android:layout_marginTop="24dp"
+            android:text="3. Tanpa kabel (Android 11+): Wireless debugging" />
+
+        <TextView
+            style="@style/CardBody"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:lineSpacingExtra="3dp"
+            android:text="Di Developer options &#8594; Wireless debugging, HP menampilkan IP dan DUA port berbeda:\n&#8226; port PAIRING \u2014 untuk kode 6 digit, sekali per perangkat pengirim\n&#8226; port CONNECT \u2014 untuk koneksi adb setelah pairing\n\nIsi kedua kolom di bawah dengan angka yang muncul di HP, lalu salin perintahnya." />
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:hint="IP:port PAIRING (contoh 192.168.1.9:37123)">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/input_pair_port"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="monospace"
+                android:inputType="textNoSuggestions" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:hint="IP:port CONNECT (contoh 192.168.1.9:41234)">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/input_connect_port"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="monospace"
+                android:inputType="textNoSuggestions" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_make_wireless"
+            style="@style/Widget.Material3.Button.TonalButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Buat perintah wireless" />
+
+        <TextView
+            style="@style/CardTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="A. Dari PC (pairing sekali, lalu connect)" />
+
+        <TextView
+            android:id="@+id/wireless_pc"
+            style="@style/Mono"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/bg_terminal"
+            android:padding="10dp"
+            android:textIsSelectable="true" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_copy_wireless_pc"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/copy" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_open_wireless_settings"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Buka Wireless debugging" />
+        </LinearLayout>
+
+        <TextView
+            style="@style/CardTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="B. Tanpa PC sama sekali (pakai Termux di HP ini)" />
+
+        <TextView
+            android:id="@+id/wireless_termux"
+            style="@style/Mono"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/bg_terminal"
+            android:padding="10dp"
+            android:textIsSelectable="true" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_copy_wireless_termux"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/copy" />
+
+        <TextView
+            style="@style/CardBody"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:lineSpacingExtra="3dp"
+            android:text="Kalau perintahnya dijalankan di HP ini sendiri (Termux), ganti IP dengan localhost. Kode 6 digit diketik saat adb pair memintanya, dan pairing cukup sekali perangkat - setelah itu cukup adb connect lalu perintah start server." />
+
+        <TextView style="@style/CardTitle" android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:layout_marginTop="24dp"
+            android:text="4. Root atau terminal di HP (perintah manual)" />
 
         <TextView
             android:id="@+id/setup_ondevice"

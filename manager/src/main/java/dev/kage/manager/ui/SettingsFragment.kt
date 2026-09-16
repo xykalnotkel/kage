@@ -42,6 +42,10 @@ class SettingsFragment : Fragment() {
             Thread { Singleton.refreshTransport(forceFile = checked) }.start()
         }
 
+        view.findViewById<MaterialButton>(R.id.btn_about).setOnClickListener {
+            startActivity(android.content.Intent(requireContext(), AboutActivity::class.java))
+        }
+
         view.findViewById<MaterialButton>(R.id.btn_regenerate).setOnClickListener {
             prefs.edit().remove("token").apply()
             Starter.token(requireContext())

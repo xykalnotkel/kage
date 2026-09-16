@@ -212,8 +212,40 @@ public final class Kage {
         return checkSelfPermission(context);
     }
 
+    /**
+     * Opens the manager's permission dialog and reports the answer back through
+     * {@link Activity#onActivityResult(int, int, Intent)} (result code RESULT_OK when granted).
+     * Use this overload from an Activity when you want to know the outcome immediately.
+     */
+    public static void requestPermission(Activity activity, int requestCode) {
+        activity.startActivityForResult(buildPermissionIntent(activity), requestCode);
+    }
+
     /** Opens the manager's permission dialog for this app. */
     public static void requestPermission(Context context) {
+        Context ctx = context != null ? context : appContext;
+        if (ctx == null) throw new IllegalStateException("no context available");
+        Intent intent = buildPermissionIntent(ctx);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        ctx.startActivity(intent);
+    }
+
+    private static Intent buildPermissionIntent(Context ctx) {
+        Intent intent = new Intent();
+        intent.setAction(Protocol.MANAGER_PACKAGE + ".intent.action.REQUEST_PERMISSION");
+        intent.setComponent(new ComponentName(Protocol.MANAGER_PACKAGE, Protocol.MANAGER_PACKAGE + ".ui.RequestPermissionActivity"));
+        intent.putExtra("package", ctx.getPackageName());
+        intent.putExtra("label", appLabel(ctx));
+        return intent;
+    }
+
+    /**
+     * Asks the manager to make the server send its binder to this app right now, instead of
+     * waiting for the server's next scan (which can take a couple of seconds).
+     */
+    public static void requestBinder(Context context) {
+        KageProvider.requestBinderNow(context != null ? context : appContext);
+    }
         Context ctx = context != null ? context : appContext;
         if (ctx == null) throw new IllegalStateException("no context available");
         Intent intent = new Intent();

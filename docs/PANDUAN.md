@@ -24,11 +24,49 @@ di sana ada perintah siap-copy.
 3. Terminal akan mencetak log server (`Kage server 2 starting`, `uid=2000 (adb)`, `server ready`).
    Selama terminal itu hidup, server hidup. Ctrl-C = server mati.
 
-### Cara B — ADB wireless (tanpa PC, Android 11+)
+### Cara B - Wireless debugging (Android 11+, tanpa kabel)
 
-1. Developer options → **Wireless debugging** → Pair device with pairing code (butuh app ADB
-   wireless di HP, mis. "adb shell" dari Termux dengan `adb pair`).
-2. Setelah terhubung: `adb shell sh /storage/emulated/0/Android/data/dev.kage.manager/files/kage/start.sh`
+Tanpa PC pun bisa. Yang perlu kamu tahu: layar **Developer options → Wireless debugging**
+menampilkan **dua port berbeda**:
+
+- **port PAIRING** - dipakai sekali untuk memasukkan kode 6 digit (perangkat pengirim didaftarkan)
+- **port CONNECT** - dipakai untuk koneksi adb setelah pairing berhasil
+
+Di app Kage buka **Beranda → Nyalakan server**. Di sana ada kolom untuk kedua port tersebut dan app
+akan membuatkan perintahnya otomatis (tinggal tekan Copy).
+
+**B1. Kalau ada PC:**
+
+```sh
+adb pair 192.168.1.9:37123      # masukkan kode 6 digit yang tampil di HP
+adb connect 192.168.1.9:41234   # ganti dengan port CONNECT
+adb shell sh /storage/emulated/0/Android/data/dev.kage.manager/files/kage/start.sh
+```
+
+Pairing hanya perlu sekali per PC. Setelah itu cukup `adb connect` + perintah start.
+
+**B2. Tanpa PC sama sekali (pakai HP ini sendiri lewat Termux):**
+
+1. Install **Termux** (dari F-Droid, bukan Play Store).
+2. Di Termux jalankan:
+
+```sh
+pkg install android-tools -y
+adb pair localhost:37123        # ganti dengan port PAIRING; ketik kode 6 digit saat diminta
+adb connect localhost:41234     # ganti dengan port CONNECT
+adb shell sh /storage/emulated/0/Android/data/dev.kage.manager/files/kage/start.sh
+```
+
+Perhatikan alamatnya **localhost**, karena yang menghubungi adalah HP itu sendiri. Setelah HP
+restart, cukup ulangi dua baris terakhir - pairing tidak perlu lagi.
+
+**B3. Dari HP/tablet lain:** sama seperti B1, tapi yang menjalankan `adb pair` / `adb connect`
+adalah perangkat kedua (bisa lewat Termux di HP kedua).
+
+> Kalau `adb pair` ditolak: pastikan HP dan perangkat pengirim ada di Wi-Fi yang sama, layar
+> Wireless debugging masih terbuka (port berubah setiap dimatikan), dan kode 6 digit belum
+> kedaluwarsa.
+
 
 ### Cara C — root
 

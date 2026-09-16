@@ -164,8 +164,13 @@ public class KageProvider extends ContentProvider {
         return managerUidCache;
     }
 
+    /** Public entry point: ask the manager (which asks the server) for a binder right now. */
+    public static void requestBinderNow(final Context context) {
+        requestBinder(context, 1, 0);
+    }
+
     /** Nudges the manager so the server pushes us the binder without waiting for its scan. */
-    static void requestBinder(final Context context, final int attempts, final long delayMs) {
+    public static void requestBinder(final Context context, final int attempts, final long delayMs) {
         if (context == null) return;
         final Handler handler = new Handler(Looper.getMainLooper());
         Thread t = new Thread("kage-request-binder") {

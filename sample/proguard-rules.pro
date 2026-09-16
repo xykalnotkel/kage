@@ -1,0 +1,4 @@
+-keep class dev.kage.common.** { *; }
+-keep class dev.kage.provider.** { *; }
+-keepclassmembers class * implements android.os.Parcelable { public static final ** CREATOR; }
+-keepattributes *Annotation*, Signature, InnerClasses, EnclosingMethod

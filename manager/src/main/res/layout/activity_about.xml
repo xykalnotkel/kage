@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="Kage (影)"
+            android:textColor="@color/kage_text"
+            android:textSize="26sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/about_version"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="4dp"
+            style="@style/CardBody" />
+
+        <TextView
+            android:id="@+id/about_intro"
+            style="@style/CardBody"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:lineSpacingExtra="3dp"
+            android:text="Kage adalah layanan privileged bergaya Shizuku: sebuah dex dijalankan lewat app_process sebagai shell atau root, lalu app lain memakai kemampuannya melalui Binder.\n\nDitulis dari nol (server, protokol, client library, dan app manager) dan dirilis dengan lisensi Apache 2.0." />
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="@color/kage_card">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView style="@style/CardTitle" android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:text="Lisensi" />
+
+                <TextView
+                    android:id="@+id/about_license"
+                    style="@style/CardBody"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:lineSpacingExtra="3dp"
+                    android:text="Apache License 2.0 - kamu bebas memakai, mengubah, dan mendistribusikan, termasuk untuk komersial, selama menyertakan lisensi dan NOTICE.\n\nKomponen pihak ketiga: AndroidX, Material Components, Kotlin &amp; kotlinx-coroutines (semuanya Apache 2.0)." />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:backgroundTint="@color/kage_card">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView style="@style/CardTitle" android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:text="Tautan" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_repo"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="Kode sumber (GitHub)" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_releases"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Rilis &amp; APK" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_guide"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Panduan pemakaian" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_arch"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Cara kerja (arsitektur)" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_license_file"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Berkas lisensi" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_lib_guide"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Panduan pakai di app lain" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:backgroundTint="@color/kage_card">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView style="@style/CardTitle" android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:text="Atribusi" />
+
+                <TextView
+                    style="@style/CardBody"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:lineSpacingExtra="3dp"
+                    android:text="Terima kasih untuk proyek Shizuku (RikkaApps, Apache 2.0) yang mempopulerkan pola &quot;binder lewat ContentProvider&quot; dan &quot;dex app_process&quot;. Kage tidak memakai kode Shizuku, hanya mekanisme yang sama - detailnya ada di berkas NOTICE." />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <TextView
+            android:id="@+id/about_build"
+            style="@style/CardBody"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp" />
+    </LinearLayout>
+</ScrollView>
