@@ -47,6 +47,8 @@ public class KageProvider extends ContentProvider {
 
     private static volatile RequestBinderHandler requestBinderHandler;
 
+    private static Context staticContext;
+
     public static void setRequestBinderHandler(RequestBinderHandler handler) {
         requestBinderHandler = handler;
     }
