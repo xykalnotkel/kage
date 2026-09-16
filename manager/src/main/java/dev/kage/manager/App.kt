@@ -32,6 +32,12 @@ class App : Application() {
             Events.binderChanged()
         }
 
+        // a client that just started asks the manager for the binder -> forward to the server
+        dev.kage.provider.KageProvider.setRequestBinderHandler { pkg ->
+            Log.i("App", "binder requested by $pkg")
+            Thread { runCatching { Singleton.push(pkg) } }.start()
+        }
+
         Thread({
             Singleton.refreshTransport()
             runCatching { permissions.syncToServer(push = true) }

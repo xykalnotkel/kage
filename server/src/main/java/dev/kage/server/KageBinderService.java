@@ -75,17 +75,14 @@ public final class KageBinderService extends Binder {
             }
 
             case Protocol.TX_REQUEST_PERMISSION: {
+                // Never grant from here: any app able to reach this binder could otherwise make
+                // itself privileged. Asking for the permission only opens the manager dialog
+                // (Kage.requestPermission), and the manager performs "pm grant" through us.
                 String pkg = data.readString();
                 int uid = pkg != null ? packageUid(pkg) : Binder.getCallingUid();
+                ServerLog.i("KageBinderService", "permission requested by " + pkg + " (uid " + uid + ")");
                 reply.writeNoException();
-                if (pkg == null || uid < 0) {
-                    reply.writeInt(0);
-                } else {
-                    PermissionStore.grant(pkg, uid);
-                    // a freshly granted client should get the binder without waiting
-                    pusher.pushNow(pkg);
-                    reply.writeInt(1);
-                }
+                reply.writeInt(0);
                 return true;
             }
 

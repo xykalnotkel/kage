@@ -37,7 +37,19 @@ public class KageProvider extends ContentProvider {
     public static final String ACTION_BINDER = "dev.kage.intent.action.BINDER";
     public static final String EXTRA_BINDER_CONTAINER = "dev.kage.extra.BINDER";
 
-    private static Context staticContext;
+    /**
+     * Hook the manager app installs so that a client asking for the binder results in an
+     * immediate push by the server instead of waiting for its next scan.
+     */
+    public interface RequestBinderHandler {
+        void onBinderRequested(String packageName);
+    }
+
+    private static volatile RequestBinderHandler requestBinderHandler;
+
+    public static void setRequestBinderHandler(RequestBinderHandler handler) {
+        requestBinderHandler = handler;
+    }
 
     @Override
     public boolean onCreate() {
@@ -81,6 +93,12 @@ public class KageProvider extends ContentProvider {
             return reply;
         }
         if (Protocol.METHOD_GET_BINDER.equals(method)) {
+            // same app, another process only: otherwise any exported provider would leak the binder
+            if (Binder.getCallingUid() != android.os.Process.myUid()) {
+                Log.w(TAG, "getBinder from foreign uid " + Binder.getCallingUid() + " refused");
+                reply.putBoolean("ok", false);
+                return reply;
+            }
             IBinder binder = Kage.getBinder();
             if (binder != null) {
                 reply.putParcelable(Protocol.EXTRA_BINDER, new BinderContainer(binder));
@@ -89,15 +107,37 @@ public class KageProvider extends ContentProvider {
             return reply;
         }
         if ("checkPermission".equals(method)) {
+            if (Binder.getCallingUid() != android.os.Process.myUid()) {
+                reply.putBoolean("granted", Kage.checkSelfPermission(getContext()));
+                return reply;
+            }
             // lets the manager/native tools consult this app about its own permission state
             reply.putBoolean("granted", Kage.checkSelfPermission(getContext()));
             return reply;
         }
         if ("requestBinder".equals(method)) {
-            // a sibling process of this app asking for the binder
+            int uid = Binder.getCallingUid();
+            String pkg = arg != null ? arg : (extras != null ? extras.getString("package") : null);
+            if (pkg == null || !pkg.equals(getContext().getPackageName())) {
+                // another app asking us to nudge the server: only the manager may do that, and it
+                // is the manager that decides; everyone else gets the local binder if this is a
+                // sibling process of the provider owner.
+                if (uid != android.os.Process.myUid() && uid != managerUid(getContext())) {
+                    reply.putBoolean("ok", false);
+                    return reply;
+                }
+            }
             IBinder binder = Kage.getBinder();
             if (binder != null) reply.putParcelable(Protocol.EXTRA_BINDER, new BinderContainer(binder));
-            reply.putBoolean("ok", binder != null);
+            RequestBinderHandler handler = requestBinderHandler;
+            if (handler != null && pkg != null) {
+                try {
+                    handler.onBinderRequested(pkg);
+                } catch (Throwable t) {
+                    Log.w(TAG, "request handler failed: " + t);
+                }
+            }
+            reply.putBoolean("ok", binder != null || handler != null);
             return reply;
         }
         return reply;
@@ -135,7 +175,7 @@ public class KageProvider extends ContentProvider {
                         Bundle extras = new Bundle();
                         extras.putString("package", context.getPackageName());
                         context.getContentResolver().call(
-                                Uri.parse("content://" + Protocol.MANAGER_PACKAGE + ".provider"),
+                                Uri.parse("content://" + Protocol.MANAGER_PACKAGE + Protocol.AUTHORITY_SUFFIX),
                                 "requestBinder", context.getPackageName(), extras);
                     } catch (Throwable t2) {
                         Log.d(TAG, "requestBinder failed: " + t2);
