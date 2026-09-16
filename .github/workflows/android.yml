@@ -10,23 +10,33 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 60
+
+    env:
+      # the ubuntu runner ships a complete Android SDK, we only add the platform we build against
+      ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
+      ANDROID_HOME: /usr/local/lib/android/sdk
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '17'
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
-
       - name: Install SDK packages
-        run: sdkmanager --install "platforms;android-34" "build-tools;34.0.0" "platform-tools"
+        run: |
+          SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          [ -x "$SDKMANAGER" ] || SDKMANAGER=$(find "$ANDROID_HOME/cmdline-tools" -name sdkmanager -type f | head -1)
+          echo "using $SDKMANAGER"
+          yes | "$SDKMANAGER" --licenses > /dev/null 2>&1 || true
+          "$SDKMANAGER" --install "platforms;android-34" "build-tools;34.0.0" || \
+          "$SDKMANAGER" --install "platforms;android-34" "build-tools;34.0.0" --sdk_root="$ANDROID_HOME"
+          ls "$ANDROID_HOME/platforms" | tail -3
+          ls "$ANDROID_HOME/build-tools" | tail -3
 
       - name: Restore release keystore
         env:
@@ -44,16 +54,14 @@ jobs:
               echo "keyAlias=$KEY_ALIAS"
               echo "keyPassword=$KEY_PASSWORD"
             } > keystore/keystore.properties
+            chmod 600 keystore/keystore.properties
             echo "release keystore restored"
           else
-            echo "::warning::KEYSTORE_BASE64 secret is missing - the release APK will stay unsigned"
+            echo "::warning::KEYSTORE_BASE64 secret is missing - the release APK stays unsigned"
           fi
 
       - name: Build the privileged server dex
         run: bash scripts/build-server-dex.sh
-
-      - name: Show dex info
-        run: ls -la manager/src/main/assets/
 
       - name: Assemble debug + release
         run: ./gradlew :manager:assembleDebug :manager:assembleRelease --no-daemon --stacktrace
@@ -61,9 +69,8 @@ jobs:
       - name: Verify signing
         run: |
           APK=$(find manager/build/outputs/apk/release -name '*.apk' | head -1)
-          if [ -n "$APK" ]; then
-            "$ANDROID_HOME"/build-tools/34.0.0/apksigner verify --print-certs "$APK" || true
-          fi
+          echo "APK: $APK"
+          "$ANDROID_HOME"/build-tools/34.0.0/apksigner verify --print-certs "$APK" || true
 
       - name: Upload APKs
         uses: actions/upload-artifact@v4
