@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Kage</string>
+    <string name="api_permission_label">Akses Kage</string>
+    <string name="api_permission_description">Mengizinkan aplikasi memakai layanan privileged Kage.</string>
+
+    <string name="tab_home">Beranda</string>
+    <string name="tab_apps">Aplikasi</string>
+    <string name="tab_terminal">Shell</string>
+    <string name="tab_tools">Alat</string>
+    <string name="tab_settings">Setelan</string>
+
+    <string name="setup_title">Nyalakan server</string>
+    <string name="logs_title">Log</string>
+    <string name="request_permission_title">Permintaan izin Kage</string>
+
+    <string name="server_running">Server jalan</string>
+    <string name="server_stopped">Server belum jalan</string>
+    <string name="server_unknown">Memeriksa…</string>
+    <string name="start_server">Nyalakan server</string>
+    <string name="stop_server">Matikan server</string>
+    <string name="restart_server">Restart</string>
+    <string name="copy">Salin</string>
+    <string name="copied">Tersalin ke clipboard</string>
+    <string name="allow">Izinkan</string>
+    <string name="deny">Tolak</string>
+</resources>

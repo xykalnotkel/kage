@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="AppTheme" parent="Theme.Material3.Dark">
+        <item name="colorPrimary">@color/kage_accent</item>
+        <item name="colorOnPrimary">#0B1020</item>
+        <item name="colorPrimaryContainer">@color/kage_primary_variant</item>
+        <item name="colorSecondary">@color/kage_accent</item>
+        <item name="android:colorBackground">@color/kage_primary</item>
+        <item name="colorSurface">@color/kage_card</item>
+        <item name="android:statusBarColor">@color/kage_primary</item>
+        <item name="android:navigationBarColor">@color/kage_primary</item>
+        <item name="android:textColorPrimary">@color/kage_text</item>
+        <item name="android:textColorSecondary">@color/kage_text_dim</item>
+    </style>
+
+    <style name="AppTheme.Dialog" parent="Theme.Material3.Dark.Dialog">
+        <item name="colorPrimary">@color/kage_accent</item>
+        <item name="android:colorBackground">@color/kage_card</item>
+        <item name="android:textColorPrimary">@color/kage_text</item>
+    </style>
+
+    <style name="CardTitle">
+        <item name="android:textColor">@color/kage_text</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="CardBody">
+        <item name="android:textColor">@color/kage_text_dim</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+
+    <style name="Mono">
+        <item name="android:fontFamily">monospace</item>
+        <item name="android:textColor">@color/kage_terminal_fg</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+</resources>

@@ -1,0 +1,122 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+}
+
+/**
+ * The privileged server is compiled into a single dex by scripts/build-server-dex.sh and shipped
+ * as an asset; the app copies it out so that "adb shell" or "su" can run it. The dex is committed
+ * so a plain clone builds without the Android SDK command line tools, while this task refreshes
+ * it whenever the server sources are newer.
+ */
+def serverDex = file("$projectDir/src/main/assets/server.dex")
+def serverSources = fileTree("$rootDir/server/src/main/java") + fileTree("$rootDir/common/src/main/java")
+
+tasks.register('buildServerDex', Exec) {
+    description = 'Compiles the privileged server into manager/src/main/assets/server.dex'
+    def script = file("$rootDir/scripts/build-server-dex.sh")
+    commandLine 'bash', script.absolutePath
+    onlyIf {
+        if (System.getenv('ANDROID_HOME') == null && System.getenv('ANDROID_SDK_ROOT') == null) {
+            logger.lifecycle('ANDROID_HOME not set - using the committed server.dex')
+            return false
+        }
+        if (!serverDex.exists()) return true
+        def dexTime = serverDex.lastModified()
+        return serverSources.any { it.lastModified() > dexTime }
+    }
+}
+
+tasks.matching { it.name == 'preBuild' }.configureEach {
+    dependsOn 'buildServerDex'
+}
+
+/** Release signing: keystore.properties (local), the KAGE_* environment variables (CI) or nothing. */
+def keystorePropertiesFile = rootProject.file('keystore/keystore.properties')
+def keystoreProperties = new Properties()
+if (keystorePropertiesFile.exists()) {
+    keystorePropertiesFile.withInputStream { keystoreProperties.load(it) }
+}
+
+def signingStorePath = System.getenv('KAGE_KEYSTORE_PATH') ?: keystoreProperties.getProperty('storeFile')
+def signingStorePassword = System.getenv('KAGE_KEYSTORE_PASSWORD') ?: keystoreProperties.getProperty('storePassword')
+def signingKeyAlias = System.getenv('KAGE_KEY_ALIAS') ?: keystoreProperties.getProperty('keyAlias')
+def signingKeyPassword = System.getenv('KAGE_KEY_PASSWORD') ?: keystoreProperties.getProperty('keyPassword')
+
+android {
+    namespace 'dev.kage.manager'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "dev.kage.manager"
+        minSdk 26
+        targetSdk 34
+        versionCode 1
+        versionName "1.0.0"
+        resourceConfigurations += ['en', 'in']
+    }
+
+    if (signingStorePath != null && signingStorePassword != null) {
+        signingConfigs {
+            release {
+                storeFile rootProject.file(signingStorePath)
+                storePassword signingStorePassword
+                keyAlias signingKeyAlias
+                keyPassword signingKeyPassword
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            if (signingStorePath != null && signingStorePassword != null) {
+                signingConfig signingConfigs.release
+            }
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+
+    buildFeatures {
+        buildConfig true
+    }
+
+    packaging {
+        resources {
+            excludes += ['META-INF/*.kotlin_module', 'DebugProbesKt.bin', 'META-INF/*.version']
+        }
+    }
+
+    androidResources {
+        // the server dex is copied out and executed; keeping it uncompressed avoids surprises
+        noCompress += ['dex']
+    }
+
+    lint {
+        abortOnError false
+        checkReleaseBuilds false
+    }
+}
+
+dependencies {
+    implementation project(':provider')
+    implementation project(':common')
+
+    implementation 'androidx.core:core-ktx:1.13.1'
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.recyclerview:recyclerview:1.3.2'
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+    implementation 'com.google.android.material:material:1.12.0'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1'
+}

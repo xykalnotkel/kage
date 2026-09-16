@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="kage_primary">#1B1B1F</color>
+    <color name="kage_primary_variant">#2A2A31</color>
+    <color name="kage_accent">#4F8CFF</color>
+    <color name="kage_ok">#3DDC84</color>
+    <color name="kage_warn">#FFB300</color>
+    <color name="kage_error">#FF5252</color>
+    <color name="kage_terminal_bg">#101014</color>
+    <color name="kage_terminal_fg">#D7D7DB</color>
+    <color name="kage_card">#1F1F24</color>
+    <color name="kage_text">#ECECEF</color>
+    <color name="kage_text_dim">#9E9EA7</color>
+</resources>
