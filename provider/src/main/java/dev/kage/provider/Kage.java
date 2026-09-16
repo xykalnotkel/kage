@@ -246,16 +246,6 @@ public final class Kage {
     public static void requestBinder(Context context) {
         KageProvider.requestBinderNow(context != null ? context : appContext);
     }
-        Context ctx = context != null ? context : appContext;
-        if (ctx == null) throw new IllegalStateException("no context available");
-        Intent intent = new Intent();
-        intent.setAction(Protocol.MANAGER_PACKAGE + ".intent.action.REQUEST_PERMISSION");
-        intent.setComponent(new ComponentName(Protocol.MANAGER_PACKAGE, Protocol.MANAGER_PACKAGE + ".ui.RequestPermissionActivity"));
-        intent.putExtra("package", ctx.getPackageName());
-        intent.putExtra("label", appLabel(ctx));
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        ctx.startActivity(intent);
-    }
 
     private static String appLabel(Context ctx) {
         try {
