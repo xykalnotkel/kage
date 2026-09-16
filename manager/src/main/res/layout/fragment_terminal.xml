@@ -43,7 +43,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:hint="sh -c ..."
-            android:imeOptions="actionRun"
+            android:imeOptions="actionSend"
             android:inputType="textNoSuggestions"
             android:maxLines="3"
             android:background="@drawable/bg_terminal"

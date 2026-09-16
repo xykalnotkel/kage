@@ -42,7 +42,7 @@ class TerminalFragment : Fragment() {
         view.findViewById<MaterialButton>(R.id.btn_save_snippet).setOnClickListener { saveSnippet() }
 
         input.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_RUN || actionId == EditorInfo.IME_ACTION_DONE) {
+            if (actionId == EditorInfo.IME_ACTION_SEND || actionId == EditorInfo.IME_ACTION_DONE) {
                 runInput()
                 true
             } else false
