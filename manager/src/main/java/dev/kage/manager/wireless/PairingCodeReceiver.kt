@@ -11,11 +11,11 @@ import dev.kage.manager.core.Singleton
 import dev.kage.manager.core.Starter
 
 /**
- * Receives the code the user typed into the notification and hands the real work to Termux.
+ * Receives the code the user typed into the pairing notification.
  *
- * Termux is asked to run in the *background* on purpose: opening a terminal session would bring
- * Termux to the front, which dismisses the "Pair device with pairing code" dialog - and that dialog
- * going away invalidates the code and the pairing port we are about to use.
+ * Kage >= 1.3 pairs natively: the pairing protocol (SPAKE2 + TLS 1.3 + AES-GCM, identical to
+ * adb's) runs inside this app, then the ADB client starts the server - no Termux, no PC.
+ * Termux stays as a fallback for the case where the native client fails on a given ROM.
  */
 class PairingCodeReceiver : BroadcastReceiver() {
 
@@ -49,19 +49,31 @@ class PairingCodeReceiver : BroadcastReceiver() {
             )
             return
         }
-        if (!WirelessPairing.isTermuxInstalled(context)) {
-            WirelessPairing.postResultNotification(
-                context, false, context.getString(R.string.wireless_no_termux)
-            )
-            return
-        }
 
         val pending = goAsync()
-        val command = WirelessPairing.termuxScript(pair, connect, script, code)
-        val sent = WirelessPairing.runInTermux(context, command)
-
         Thread {
             try {
+                if (pair != null) {
+                    // 1) native: pair + connect + start, all inside Kage
+                    val (ok, message) = NativePairing.runBlocking(
+                        context, pair, connect, code, script
+                    ) { stage -> Log.i("Wireless", stage) }
+                    if (ok || !WirelessPairing.isTermuxInstalled(context)) {
+                        WirelessPairing.postResultNotification(context, ok, message)
+                        return@Thread
+                    }
+                    Log.w("Wireless", "native gagal, coba fallback Termux: $message")
+                }
+
+                // 2) fallback: let Termux run adb pair/connect/shell
+                if (!WirelessPairing.isTermuxInstalled(context)) {
+                    WirelessPairing.postResultNotification(
+                        context, false, context.getString(R.string.wireless_no_termux)
+                    )
+                    return@Thread
+                }
+                val command = WirelessPairing.termuxScript(pair, connect, script, code)
+                val sent = WirelessPairing.runInTermux(context, command)
                 if (!sent) {
                     WirelessPairing.postResultNotification(
                         context, false, context.getString(R.string.wireless_termux_blocked)

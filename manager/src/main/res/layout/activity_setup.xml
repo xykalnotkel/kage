@@ -188,6 +188,14 @@
             android:text="@string/wireless_pair_notif" />
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_pair_native"
+            style="@style/Widget.Material3.Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/wireless_pair_native" />
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_start_termux"
             style="@style/Widget.Material3.Button.TonalButton"
             android:layout_width="match_parent"

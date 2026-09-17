@@ -14,9 +14,12 @@ import com.google.android.material.button.MaterialButton
 import dev.kage.manager.R
 import dev.kage.manager.core.Singleton
 import dev.kage.manager.core.Starter
+import dev.kage.manager.wireless.NativePairing
 import dev.kage.manager.wireless.WirelessPairing
 
 class SetupActivity : AppCompatActivity() {
+
+    private lateinit var wirelessStatus: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,7 +83,7 @@ class SetupActivity : AppCompatActivity() {
         }
 
         // ---------- pairing lewat notifikasi (kode diketik di notif) ----------
-        val wirelessStatus = findViewById<TextView>(R.id.wireless_status)
+        wirelessStatus = findViewById(R.id.wireless_status)
         findViewById<MaterialButton>(R.id.btn_pair_notif).setOnClickListener {
             askForPairingPermissions()
             WirelessPairing.postCodeNotification(
@@ -147,6 +150,48 @@ class SetupActivity : AppCompatActivity() {
                 }
             }.start()
         }
+    }
+
+    private fun showNativeCodeDialog(pair: String, connect: String, scriptPath: String?) {
+        val input = EditText(this).apply {
+            hint = getString(R.string.wireless_code_hint)
+            inputType = android.text.InputType.TYPE_CLASS_NUMBER
+            filters = arrayOf(android.text.InputFilter.LengthFilter(6))
+        }
+        val wrap = android.widget.FrameLayout(this).apply {
+            val pad = (resources.displayMetrics.density * 20).toInt()
+            setPadding(pad, pad / 2, pad, 0)
+            addView(input)
+        }
+        com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+            .setTitle(getString(R.string.wireless_native_dialog_title))
+            .setMessage(getString(R.string.wireless_native_dialog_message, pair))
+            .setView(wrap)
+            .setPositiveButton(R.string.wireless_send_code) { _, _ ->
+                val code = WirelessPairing.cleanCode(input.text.toString())
+                if (code == null) {
+                    wirelessStatus.text = getString(R.string.wireless_code_invalid)
+                    return@setPositiveButton
+                }
+                startNativePairing(pair, connect, code, scriptPath)
+            }
+            .setNegativeButton(android.R.string.cancel, null)
+            .show()
+    }
+
+    private fun startNativePairing(pair: String, connect: String, code: String, scriptPath: String?) {
+        wirelessStatus.text = getString(R.string.wireless_native_stage_pair, pair)
+        val started = NativePairing.start(
+            this, pair, connect, code, scriptPath,
+            onStage = { stage -> runOnUiThread { wirelessStatus.text = stage } },
+            onDone = { ok, message ->
+                runOnUiThread {
+                    wirelessStatus.text = message
+                    toast(message)
+                }
+            }
+        )
+        if (!started) toast(getString(R.string.wireless_native_busy))
     }
 
     private fun askForPairingPermissions() {

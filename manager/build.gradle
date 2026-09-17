@@ -51,8 +51,8 @@ android {
         applicationId "dev.kage.manager"
         minSdk 26
         targetSdk 34
-        versionCode 4
-        versionName "1.2.0"
+        versionCode 5
+        versionName "1.3.0"
         resourceConfigurations += ['en', 'in']
     }
 
@@ -93,7 +93,9 @@ android {
 
     packaging {
         resources {
-            excludes += ['META-INF/*.kotlin_module', 'DebugProbesKt.bin', 'META-INF/*.version']
+            excludes += ['META-INF/*.kotlin_module', 'DebugProbesKt.bin', 'META-INF/*.version',
+                         'META-INF/versions/9/OSGI-INF/MANIFEST.MF',
+                         'module-info.class', 'META-INF/versions/9/module-info.class']
         }
     }
 
@@ -112,6 +114,14 @@ dependencies {
     implementation project(':provider')
     implementation project(':common')
 
+    // native wireless-debugging pairing: BoringSSL-compatible SPAKE2 needs group math,
+    // and the pairing/connect TLS channel needs RFC 5705 keying material export,
+    // neither of which the platform JSSE exposes. bcprov provides the ASN.1/crypto core,
+    // bcutil the OID compat classes the other two reference, bctls the TLS 1.3 stack.
+    implementation 'org.bouncycastle:bcprov-jdk18on:1.80'
+    implementation 'org.bouncycastle:bcutil-jdk18on:1.80'
+    implementation 'org.bouncycastle:bctls-jdk18on:1.80'
+
     implementation 'androidx.core:core-ktx:1.13.1'
     implementation 'androidx.appcompat:appcompat:1.7.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
@@ -119,4 +129,8 @@ dependencies {
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     implementation 'com.google.android.material:material:1.12.0'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1'
+
+    testImplementation 'junit:junit:4.13.2'
+    // real org.json implementation for unit tests (the android.jar one is a stub)
+    testImplementation 'org.json:json:20240303'
 }

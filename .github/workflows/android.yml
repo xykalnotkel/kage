@@ -66,6 +66,9 @@ jobs:
       - name: Build the privileged server dex
         run: bash scripts/build-server-dex.sh
 
+      - name: Run unit tests
+        run: ./gradlew :manager:testDebugUnitTest --no-daemon --stacktrace
+
       - name: Assemble manager (app utama)
         run: ./gradlew :manager:assembleDebug :manager:assembleRelease --no-daemon --stacktrace
 

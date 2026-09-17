@@ -35,6 +35,24 @@ menampilkan **dua port berbeda**:
 Di app Kage buka **Beranda → Nyalakan server**. Di sana ada kolom untuk kedua port tersebut dan app
 akan membuatkan perintahnya otomatis (tinggal tekan Copy).
 
+**B-1. Cara paling enak: pairing native (Kage = adb client-nya sendiri, sejak v1.3)**
+
+Sejak versi 1.3 Kage membawa **client adb lengkap di dalam app**: protokol pairing resmi adb
+(SPAKE2 + TLS 1.3 + AES-GCM, identik dengan `adb pair` di PC) dijalankan langsung oleh app, tanpa
+Termux dan tanpa PC sama sekali.
+
+1. Buka **Setelan → Nyalakan server**.
+2. Biarkan kolom port terisi otomatis via mDNS (atau isi manual dari layar Wireless debugging).
+3. Tap **Pair & nyalakan native (tanpa Termux, tanpa PC)**.
+4. Buka **"Pair device with pairing code"** di HP (jangan ditutup), ketik kode 6 digitnya di
+   dialog Kage, tekan **Kirim**.
+5. Kage menjalankan sendiri rangkaian `adb pair` → `adb connect` → start server, lalu konfirmasi
+   lewat heartbeat.
+
+Pairing ini **sekali per perangkat** (kunci adb Kage tersimpan di penyimpanan private app). Setelah
+HP restart, cukup ulangi langkah connect+start - atau pakai jalur notifikasi di bawah yang
+sekarang otomatis memakai mesin native ini juga, dengan Termux hanya sebagai cadangan.
+
 **B0. Cara paling cepat: pairing lewat notifikasi (tanpa PC, tanpa split-screen)**
 
 Dialog "Pair device with pairing code" itu **hilang begitu kamu pindah app**, dan begitu dialognya

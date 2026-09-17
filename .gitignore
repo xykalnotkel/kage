@@ -17,3 +17,5 @@ manager/build/
 provider/build/
 common/build/
 .kotlin/
+sample/build/
+__pycache__/

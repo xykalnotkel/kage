@@ -45,6 +45,9 @@ Setiap rilis menyertakan tiga berkas: **manager-release.apk** (app utama),
   grant/revoke izin, doze whitelist, screenshot, screenrecord, trim cache, dan lain-lain.
 - **Setelan** – debug log, paksa transport file, buat ulang token, info path.
 - **Dialog izin** – app pihak ketiga minta izin → manager menampilkan dialog → grant via server.
+- **Pairing wireless native (v1.3)** – client adb lengkap di dalam app (SPAKE2 + TLS 1.3,
+  identik dengan `adb pair` resmi): pairing & start server tanpa PC dan tanpa Termux. Termux
+  tetap ada sebagai jalur cadangan.
 
 ## Build
 
